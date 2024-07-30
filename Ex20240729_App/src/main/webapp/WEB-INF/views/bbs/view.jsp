@@ -164,12 +164,12 @@
 			// 인자로 사용자가 클릭한 파일명을 받는다.
 			// 이것을 현재 문서 안에 있는 frm이라는 폼 객체에 이름이
 			// fname이라는 hidden요소의 값(value)으로 지정해둔다.
-			/*
+			
 			document.frm.file_name.value = file_name;
-			document.frm.action = "FileDownload";
+			document.frm.action = "download";
 			document.frm.submit();
-			*/
-			location.href="FileDownload?dir=upload&filename="+file_name;
+			
+			// location.href="download?dir=upload&filename="+file_name;
 		}
 	</script>
 </body>
