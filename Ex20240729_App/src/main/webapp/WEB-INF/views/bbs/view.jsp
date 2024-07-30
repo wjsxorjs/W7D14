@@ -1,6 +1,6 @@
 <%@page import="java.util.List"%>
-<%@page import="mybatis.vo.CommVO"%>
-<%@page import="mybatis.vo.BbsVO"%>
+<%@page import="com.sist.app.vo.CommVO"%>
+<%@page import="com.sist.app.vo.BbsVO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>

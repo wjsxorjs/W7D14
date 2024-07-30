@@ -58,6 +58,14 @@
         WHERE b_idx = #{b_idx} AND status = 0
     </select>
 
+    <!-- 게시글 반환 -->
+    <update id="udtBbs" parameterType="Map">
+        UPDATE `bbs_t`
+        SET content = #{content}
+        WHERE b_idx = #{b_idx}
+    </update>
+
+
     <insert id="add" parameterType="com.sist.app.vo.BbsVO">
         INSERT
         INTO `bbs_t`(subject, writer, content, file_name, ori_name, write_date, ip,  hit , bname, status)

@@ -166,16 +166,32 @@ public class BbsController {
     }
 
 
-    @GetMapping("view")
-    public ModelAndView view(int b_idx) {
+    @RequestMapping("view")
+    public ModelAndView view(String bname, int b_idx) {
         ModelAndView mv = new ModelAndView();
 
         BbsVO bvo = b_service.getBbs(b_idx);
 
         mv.addObject("bvo", bvo);
+        mv.setViewName(bname+"/view");
         return mv;
     }
     
+    
+    @PostMapping("edit")
+    public ModelAndView edit(String bname, String content, int b_idx, String cPage) {
+        ModelAndView mv = new ModelAndView();
+        if(request.getContentType().startsWith("application")){ // 수정으로 이동
+            BbsVO bvo = b_service.getBbs(b_idx);
+
+            mv.addObject("bvo", bvo);
+            mv.setViewName(bname+"/edit");
+        } else { // 수정한 것 적용
+            b_service.udtBbs(content, b_idx);
+            mv.setViewName("redirect:/view?bname="+bname+"&cPage="+cPage+"&b_idx="+b_idx);
+        }
+        return mv;
+    }
     
     
 }

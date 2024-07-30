@@ -42,4 +42,8 @@ public class BbsService {
         return bvo;
     }
 
+    public int udtBbs(String content, int b_idx){
+        return b_mapper.udtBbs(content, b_idx);
+    }
+
 }
