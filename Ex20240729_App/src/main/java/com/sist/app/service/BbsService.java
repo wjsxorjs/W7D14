@@ -45,5 +45,8 @@ public class BbsService {
     public int udtBbs(String content, int b_idx){
         return b_mapper.udtBbs(content, b_idx);
     }
+    public int udtHit(int b_idx){
+        return b_mapper.udtHit(b_idx);
+    }
 
 }

@@ -65,6 +65,13 @@
         WHERE b_idx = #{b_idx}
     </update>
 
+    <!-- 조회수 업뎃 -->
+    <update id="udtHit" parameterType="int">
+        UPDATE `bbs_t`
+        SET hit = hit+1
+        WHERE b_idx = #{b_idx}
+    </update>
+
 
     <insert id="add" parameterType="com.sist.app.vo.BbsVO">
         INSERT

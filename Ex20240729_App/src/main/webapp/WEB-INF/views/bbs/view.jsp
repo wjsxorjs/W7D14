@@ -70,16 +70,18 @@
 	<div id="bbs">
 	<form method="post" >
 		<table summary="게시판 글보기">
-			<caption>게시판 글쓰기</caption>
+			<caption>게시판 글보기</caption>
 			<tbody>
 				<tr>
 					<th>제목:</th>
 					<td>${bvo.subject}</td>
+					<th style="width: 20%;">조회수</th>
+					<td style="text-align: center;">${bvo.hit}</td>
 				</tr>
 
 				<tr>
 					<th>첨부파일:</th>
-					<td>
+					<td colspan="3">
 					<c:if test="${bvo.file_name ne null }">
 						<a href="javascript:down('${bvo.file_name}')"> ${bvo.ori_name} </a>
 					</c:if>
@@ -91,15 +93,15 @@
 				
 				<tr>
 					<th>이름:</th>
-					<td>${bvo.writer}</td>
+					<td colspan="3">${bvo.writer}</td>
 				</tr>
 				<tr>
 					<th>내용:</th>
-					<td>${bvo.content}</td>
+					<td colspan="3">${bvo.content}</td>
 				</tr>
 				
 				<tr>
-					<td colspan="2">
+					<td colspan="4">
 						<input type="button" onclick="doBbs('edit')" value="수정"/>
 						<input type="button" onclick="doBbs('del')" value="삭제"/>
 						<input type="button" onclick="doBbs('list')" value="목록"/>

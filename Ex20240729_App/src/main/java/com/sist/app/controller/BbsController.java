@@ -1,7 +1,9 @@
 package com.sist.app.controller;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +50,7 @@ public class BbsController {
     @Value("${server.editor_img.path}")
 	private String editor_img; // 썸머노트 이미지 추가할 때 저장할 위치
 
+    List<Integer> b_list;
 
     @RequestMapping("list")
     public ModelAndView list(@RequestParam String bname, String searchType, String searchValue, String cPage) {
@@ -170,7 +173,18 @@ public class BbsController {
     public ModelAndView view(String bname, int b_idx) {
         ModelAndView mv = new ModelAndView();
 
+        if(b_list == null){
+            b_list = new ArrayList<>();
+        }
+        
+        if(!b_list.contains(b_idx)){
+            b_service.udtHit(b_idx);
+            b_list.add(b_idx);
+        } 
+        
+
         BbsVO bvo = b_service.getBbs(b_idx);
+
 
         mv.addObject("bvo", bvo);
         mv.setViewName(bname+"/view");
