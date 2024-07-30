@@ -11,4 +11,5 @@ public interface CommMapper {
     
     List<CommVO> commList(String b_idx);
 
+    int commAdd(CommVO cvo);
 }

@@ -27,4 +27,9 @@ public class CommService {
     };
 
 
+    public int commAdd(CommVO cvo){
+        return c_mapper.commAdd(cvo);
+    }
+
+
 }

@@ -12,5 +12,11 @@
         WHERE b_idx = #{b_idx}
     </select>
 
+    <insert id="commAdd" parameterType="com.sist.app.vo.CommVO">
+        INSERT
+        INTO `comment_t`(writer, content, write_date, ip, b_idx)
+        VALUES(#{writer}, #{content},NOW(),#{ip},#{b_idx})
+    </insert>
+
 
 </mapper>

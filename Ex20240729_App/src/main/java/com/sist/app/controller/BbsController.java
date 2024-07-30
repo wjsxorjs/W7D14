@@ -1,6 +1,9 @@
 package com.sist.app.controller;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,16 +11,23 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 
 import com.sist.app.service.BbsService;
+import com.sist.app.service.CommService;
 import com.sist.app.util.FileRenameUtil;
 import com.sist.app.util.Paging2;
 import com.sist.app.vo.BbsVO;
+import com.sist.app.vo.CommVO;
 
 import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -27,6 +37,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 
 
@@ -36,10 +48,19 @@ public class BbsController {
     BbsService b_service;
 
     @Autowired
+    CommService c_service;
+
+    @Autowired
     private ServletContext application;
 
     @Autowired
     private HttpServletRequest request;
+
+    @Autowired
+    private HttpServletResponse response;
+
+	@Autowired
+	private HttpSession session;
 
     @Autowired
     private ResourceLoader resourceLoader;
@@ -50,7 +71,6 @@ public class BbsController {
     @Value("${server.editor_img.path}")
 	private String editor_img; // 썸머노트 이미지 추가할 때 저장할 위치
 
-    List<Integer> b_list;
 
     @RequestMapping("list")
     public ModelAndView list(@RequestParam String bname, String searchType, String searchValue, String cPage) {
@@ -173,10 +193,17 @@ public class BbsController {
     public ModelAndView view(String bname, int b_idx) {
         ModelAndView mv = new ModelAndView();
 
-        if(b_list == null){
+        List<Integer> b_list;
+
+        Object obj = session.getAttribute("b_list");
+
+        if(obj != null){
+            b_list = (List<Integer>) obj;
+        } else {
             b_list = new ArrayList<>();
+            session.setAttribute("b_list",b_list);
         }
-        
+
         if(!b_list.contains(b_idx)){
             b_service.udtHit(b_idx);
             b_list.add(b_idx);
@@ -207,5 +234,95 @@ public class BbsController {
         return mv;
     }
     
+    @PostMapping("del")
+    public String del(String bname, int b_idx) {
+        
+        return "redircet:/list?bname="+bname;
+    }
+
+    @PostMapping("comm")
+    public String comm(CommVO cvo, String bname, String cPage) {
+        
+        cvo.setIp(request.getRemoteAddr());
+
+        c_service.commAdd(cvo);
+
+        return "redirect:/view?bname="+bname+"&cPage="+cPage+"&b_idx="+cvo.getB_idx();
+    }
+
+    @PostMapping("download")
+    public ResponseEntity<Resource> download(String file_name) {
+        // 파일들이 위치하는 곳을 절대경로화 시킨다.
+        String realPath = application.getRealPath(upload_path+"/"+file_name);
+        File f = new File(realPath);
+
+        if(f.exists()){
+            byte[] buf = new byte[4096];
+            int size = -1;
+
+            // 다운로드에 필요한 스트림
+            FileInputStream fis = null;
+            BufferedInputStream bis = null;
+
+            // 보내기 할 때 필요한 스트림
+            BufferedOutputStream bos = null;
+                // 응답을 하는 것이 응답자의 컴퓨터로 다운로드를
+                // 시켜야 하기 때문에 response를 통해 Outputstream을
+                // 얻어내야 한다. 이때 response가 주는 스트림이
+                // ServletOutputStream을 주기 때문에 선언되었다.
+            ServletOutputStream sos = null;
+
+            // 접속자 화면에 다운로드 창
+            try {
+                response.setContentType("application/x-msdownload");
+                response.setHeader("Content-Disposition",
+                "attachment;filename="+new String(file_name.getBytes(), "8859_1"));
+            
+                fis = new FileInputStream(f);
+                bis = new BufferedInputStream(fis);
+
+                // response를 통해 이미 out이라는 스트림이 존재하므로
+                // 다운로드 시키기 위해 스트림 준비
+                sos = response.getOutputStream();
+                bos = new BufferedOutputStream(sos);
+
+                while ((size = bis.read(buf)) != -1) {
+                    // 읽은 자원을 buf에 적재된 상태
+                    // buf라는 배열에 있는 자원들을 쓰기
+                    bos.write(buf,0,size);
+                    bos.flush();
+                }
+            
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally{
+                try {
+                    if(fis != null){
+                        fis.close();
+                    }
+                    if(bis != null){
+                        bis.close();
+                    }
+                    if(sos != null){
+                        sos.close();
+                    }
+                    if(bos != null){
+                        bos.close();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+
+
+
+
+        }
+        return null;
+    }
+    
+
     
 }
