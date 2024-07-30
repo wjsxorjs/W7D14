@@ -1,0 +1,30 @@
+@charset "UTF-8";
+
+ul#menu{
+	width: 700px;
+	height: 30px;
+	margin: 10px auto;
+	padding: 0px;
+	display: flex;
+	list-style: none;
+}
+ul#menu>li{
+	width: 160px;
+	height: 100%;
+	border: 1px solid blue;
+	border-right: none;
+}
+ul#menu>li:first-child{
+	border-left: none;
+}
+
+ul#menu>li>a{
+	display: block;
+	width: 100%;
+	height: 100%;
+	line-height: 30px;
+	text-align: center;
+	text-decoration: none;
+	background-color: #00bfff;
+	color: #fff; 
+}
